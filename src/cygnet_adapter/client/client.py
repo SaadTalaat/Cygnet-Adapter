@@ -9,20 +9,19 @@ from clusterState import ClusterState
 class RouterClient(ApplicationSession):
 
     def __init__(self, config):
-        ApplicationSession.__init__(self,config)
+        ApplicationSession.__init__(self, config)
         self.cluster_state = ClusterState(self)
 
     @inlineCallbacks
     def onJoin(self, details):
 
-        print "Adapter Attached to Router"
+        print("Adapter Attached to Router")
         self.cluster_state.init(details)
         CygnusNetworkAdapter.client = self
         CygnusAPI.client = self
         yield self.subscribe(self.cluster_state)
 
-
-    def leave(self, reason = None, log_message=None):
+    def leave(self, reason=None, log_message=None):
         self.cluster_state.leave()
         ApplicationSession.leave(self, reason, log_message)
 
