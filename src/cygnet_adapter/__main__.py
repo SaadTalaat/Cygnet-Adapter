@@ -57,11 +57,16 @@ def main(router_addr, router_realm, etcd_server_addr):
     #     runner = HybridRunner(
     #         environ['WAMP_WEBSOCKET_URL'],
     #         environ['WAMP_REALM'])
-
+    try:
+        router_addr = bytes(router_addr, 'utf-8')
+        router_realm = bytes(router_realm, 'utf-8')
+    except:
+        router_addr = router_addr.decode('utf-8')
+        router_realm = router_realm.decode('utf-8')
     ClusterState.etcd_addr = (etcd_server_addr.split(':')[0], etcd_server_addr.split(':')[1])
     runner = HybridRunner(
-        ''.join([u"ws://", router_addr, "/ws"]),
-        unicode(router_realm))
+        b''.join([b"ws://", router_addr, b"/ws"]),
+        router_realm)
     adapter = getAdapter()
     reactor.listenTCP(80, adapter)
     runner.run(RouterClient, adapter)
