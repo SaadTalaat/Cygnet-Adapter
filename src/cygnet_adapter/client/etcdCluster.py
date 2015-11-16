@@ -109,25 +109,23 @@ class EtcdClusterClient(etcd.Client):
         except:
             return False
 
-    def updateContainer(self, container):
-        container_key = "nodes/" + self.nodeId+"/containers/"+container["Id"]
+    def updateContainer(self, container, key=None):
+        container_key = "nodes/" + self.nodeId + "/containers/" + container["Id"]
+        if key:
+            current_key = container_key + "/" + key
         try:
-            for key, value in container.items():
-                current_key = container_key+"/"+key
+            if key:
                 node = self.get(current_key)
                 node.value = container[key]
                 self.update(node)
-            return True
-        except:
-            return False
-
-    def updateContainer(self, container, key):
-        current_key = "nodes/" + self.nodeId + "/containers/" + container["Id"] + "/" + key
-        try:
-            node = self.get(current_key)
-            node.value = container[key]
-            self.update(node)
-            return True
+                return True
+            else:
+                for key2, value in container.items():
+                    current_key = container_key+"/"+key2
+                    node = self.get(current_key)
+                    node.value = container[key2]
+                    self.update(node)
+                return True
         except:
             return False
 
