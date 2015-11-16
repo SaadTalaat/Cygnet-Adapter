@@ -144,7 +144,7 @@ class ClusterState(object):
         container[field] = value
         self.etcd_client.updateContainer(container, field)
 
-    @wamp.subscribe(b'nodes.sync_nodes')
+    @wamp.subscribe('nodes.sync_nodes')
     def syncNodes(self, nodes):
 
         # Are we syncing on a startup?
@@ -162,7 +162,7 @@ class ClusterState(object):
                     self.nodes.remove(node)
             print("After a leave", self.nodes)
 
-    @wamp.subscribe(b'nodes.sync_request')
+    @wamp.subscribe('nodes.sync_request')
     def syncRequest(self, origin):
         if origin['id'] not in self.health:
             self.health[origin['id']] = 0
