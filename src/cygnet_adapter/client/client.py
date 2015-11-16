@@ -3,7 +3,7 @@ from twisted.internet.defer import inlineCallbacks
 
 from cygnet_adapter.adapter.adapter import CygnusNetworkAdapter
 from cygnet_adapter.adapter.api.cygnusApi import CygnusAPI
-from clusterState import ClusterState
+from cygnet_adapter.client.clusterState import ClusterState
 
 
 class RouterClient(ApplicationSession):

@@ -1,7 +1,7 @@
 from twisted.web import resource, server
 import json
 from pprint import pprint
-from api.cygnusApi import CygnusAPI
+from cygnet_adapter.adapter.api.cygnusApi import CygnusAPI
 
 
 class CygnusNetworkAdapter(resource.Resource):

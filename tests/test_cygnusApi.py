@@ -1,4 +1,4 @@
-from src.cygnet_adapter.adapter.api.cygnusApi import CygnusAPI
+from cygnet_adapter.adapter.api.cygnusApi import CygnusAPI
 import unittest
 from random import randint
 
@@ -29,6 +29,7 @@ class CygnusApiTest(unittest.TestCase):
         self.dummy_req = dict()
         self.dummy_req['ClientRequest'] = dict()
         self.dummy_req['ClientRequest']['Request'] = None
+        self.dummy_req['ClientRequest']['Method'] = 'POST'
         self.dummy_req['ServerResponse'] = 'dummy'
 
     def tearDown(self):
@@ -63,17 +64,17 @@ class CygnusApiTest(unittest.TestCase):
         for cont in conts:
             self.api.createContainer(cont)
 
-        for cont in self.api.client.cluster_state.containers.itervalues():
+        for cont in self.api.client.cluster_state.containers.values():
             self.assertEquals(cont,1)
 
         for cont in conts:
             self.api.stopContainer(cont)
-        for cont in self.api.client.cluster_state.containers.itervalues():
+        for cont in self.api.client.cluster_state.containers.values():
             self.assertEquals(cont, 0)
 
         for cont in conts:
             self.api.startContainer(cont)
-        for cont in self.api.client.cluster_state.containers.itervalues():
+        for cont in self.api.client.cluster_state.containers.values():
             self.assertEquals(cont, 1)
         for cont in conts:
             self.dummy_req['ClientRequest']['Request'] = (reqs[randint(0,2)]).replace('alterme',cont)

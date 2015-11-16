@@ -1,10 +1,10 @@
 import sys
 import click
 from twisted.internet import reactor
-from client.clusterState import ClusterState
-from adapter.adapter import getAdapter
-from client.client import HybridRunner
-from client.client import RouterClient
+from cygnet_adapter.client.clusterState import ClusterState
+from cygnet_adapter.adapter.adapter import getAdapter
+from cygnet_adapter.client.client import HybridRunner
+from cygnet_adapter.client.client import RouterClient
 
 # Why does this file exist, and why __main__?
 # For more info, read:

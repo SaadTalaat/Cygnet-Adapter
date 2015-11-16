@@ -1,7 +1,7 @@
 from autobahn import wamp
 from cygnet_common.design import Task
 from copy import deepcopy
-from etcdCluster import EtcdClusterClient
+from cygnet_adapter.client.etcdCluster import EtcdClusterClient
 import uuid
 
 
@@ -48,9 +48,9 @@ class ClusterState(object):
         if not self.health:
             return
         self.session.publish("nodes.sync_request", self.node)
-        most = max([health for health in self.health.itervalues()])
+        most = max([health for health in self.health.values()])
         health_tmp = deepcopy(self.health)
-        for nodeId, health in health_tmp.iteritems():
+        for nodeId, health in health_tmp.items():
             # find node dictionary
             mask = [node['session'] == nodeId for node in self.nodes]
             # If there has not been a keepalive in 5 health-checks
@@ -153,7 +153,7 @@ class ClusterState(object):
                 if node not in self.nodes:
                     self.nodes.append(node)
                     if self.health and node['id'] not in self.health:
-                        self.health[node['id']] = max([v for v in self.health.itervalues()])
+                        self.health[node['id']] = max([v for v in self.health.values()])
             print("Synced Nodes:", self.nodes)
         # Are we broadcasting a leave?
         if len(nodes) < len(self.nodes):
@@ -167,7 +167,7 @@ class ClusterState(object):
         if origin['id'] not in self.health:
             self.health[origin['id']] = 0
         self.health[origin['id']] += 1
-        self.health[origin['id']] = max([v for v in self.health.itervalues()])
+        self.health[origin['id']] = max([v for v in self.health.values()])
         if origin not in self.nodes:
             self.nodes.append(origin)
         self.session.publish("nodes.sync_nodes", self.nodes)

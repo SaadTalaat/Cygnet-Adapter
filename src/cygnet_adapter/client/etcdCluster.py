@@ -102,7 +102,7 @@ class EtcdClusterClient(etcd.Client):
 
         try:
             self.write(container_key, None, dir=True)
-            for key, value in container.iteritems():
+            for key, value in container.items():
                 current_key = container_key + "/" + key
                 self.write(current_key, value, dir=False)
             return True
@@ -112,7 +112,7 @@ class EtcdClusterClient(etcd.Client):
     def updateContainer(self, container):
         container_key = "nodes/" + self.nodeId+"/containers/"+container["Id"]
         try:
-            for key, value in container.iteritems():
+            for key, value in container.items():
                 current_key = container_key+"/"+key
                 node = self.get(current_key)
                 node.value = container[key]
