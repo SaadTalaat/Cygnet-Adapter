@@ -1,6 +1,0 @@
-1 - Implement a ClusterState Class which mainly shall subscribe to all nodes/containers state topics.
-    A clusterState should sync connected adapters, broadcast removal, failure checks.
-    A cluster parent record should be identified by an adapter which inheritely contains its containers informations and state.
-
-2 - Describe each node record
-3 - Refactor clusterState and and EtcdCluster to inherit twisted client protocol to be ran with the HybridRunner.

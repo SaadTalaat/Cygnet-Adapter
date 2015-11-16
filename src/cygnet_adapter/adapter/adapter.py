@@ -1,8 +1,8 @@
 from twisted.web import resource, server
 import json
 from pprint import pprint
-from twisted.internet.defer import inlineCallbacks
-from api.cygnusApi import CygnusAPI
+from cygnet_adapter.adapter.api.cygnusApi import CygnusAPI
+
 
 class CygnusNetworkAdapter(resource.Resource):
     isLeaf = True
@@ -15,10 +15,10 @@ class CygnusNetworkAdapter(resource.Resource):
         # { '172.17.0.31' : ['containeridentifier1', 'containeridentifier2'] }
         self.nodes = []
         self.api = CygnusAPI()
-        
+
     def render_POST(self, request):
-        print request.method, "In post"
-        print ''
+        print(request.method, "In post")
+        print('')
         requestJson = json.loads(request.content.read())
         pprint(requestJson)
         if requestJson["Type"] == 'pre-hook':

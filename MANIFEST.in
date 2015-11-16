@@ -4,6 +4,8 @@ graft src
 graft ci
 graft tests
 
+prune .travis
+
 include .bumpversion.cfg
 include .coveragerc
 include .cookiecutterrc
@@ -13,9 +15,8 @@ include .pylintrc
 include AUTHORS.rst
 include CHANGELOG.rst
 include CONTRIBUTING.rst
-include LICENSE
+include LICENSE.md
 include README.rst
-
 include tox.ini .travis.yml appveyor.yml
 
-global-exclude *.py[cod] __pycache__ *.so *.dylib
+global-exclude *.py[cod] __pycache__ *.so *.dylib Dockerfile
