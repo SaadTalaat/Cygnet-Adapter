@@ -5,6 +5,7 @@ from cygnet_adapter.client.clusterState import ClusterState
 from cygnet_adapter.adapter.adapter import getAdapter
 from cygnet_adapter.client.client import HybridRunner
 from cygnet_adapter.client.client import RouterClient
+from cygnet_common import strtypes
 
 # Why does this file exist, and why __main__?
 # For more info, read:
@@ -57,15 +58,10 @@ def main(router_addr, router_realm, etcd_server_addr):
     #     runner = HybridRunner(
     #         environ['WAMP_WEBSOCKET_URL'],
     #         environ['WAMP_REALM'])
-    try:
-        router_addr = router_addr.decode('utf-8')
-        router_realm = router_realm.decode('utf-8')
-    except:
-        pass
     ClusterState.etcd_addr = (etcd_server_addr.split(':')[0], etcd_server_addr.split(':')[1])
     runner = HybridRunner(
-        ''.join(["ws://", router_addr, "/ws"]),
-        router_realm)
+        ''.join([u"ws://", router_addr, "/ws"]),
+        strtypes.cast_unicode(router_realm))
     adapter = getAdapter()
     reactor.listenTCP(80, adapter)
     runner.run(RouterClient, adapter)
