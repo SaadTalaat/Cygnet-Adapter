@@ -1,4 +1,5 @@
 import etcd
+from cygnet_common.generic.Container import Container
 
 
 class EtcdClusterClient(etcd.Client):
