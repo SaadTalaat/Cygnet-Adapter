@@ -1,6 +1,7 @@
 from autobahn import wamp
 from cygnet_common.design import Task
 from cygnet_common import strtypes
+from cygnet_common.generic.Container import Container
 from copy import deepcopy
 from cygnet_adapter.client.etcdCluster import EtcdClusterClient
 import uuid
@@ -69,10 +70,12 @@ class ClusterState(object):
         else:
             addr = None
             return False
-        exists = filter(lambda x: str(x) == addr, [container["Address"] for container in self.node['containers']])
+        exists = filter(lambda x: str(x) == addr, [container.address for container in self.node['containers']])
         if addr and exists:
             return False
-        container = {"Id": containerId, "Name": None, "Node": self.node['id'], "State": 1, "Address": addr}
+        container = Container(containerId, self.node['id'])
+        container.running(True)
+        container.address = addr
         self.nodes.remove(self.node)
         self.node['containers'].append(container)
         self.nodes.append(self.node)
@@ -87,8 +90,8 @@ class ClusterState(object):
             print("Bad Identification")
             return
         else:
-            cont_with_id = filter(lambda x: str(x['Id']).find(containerId) == 0, self.node['containers'])
-            cont_with_name = filter(lambda x: str(x['Name']).find(containerId) == 1, self.node['containers'])
+            cont_with_id = filter(lambda x: str(x.id).find(containerId) == 0, self.node['containers'])
+            cont_with_name = filter(lambda x: str(x.name).find(containerId) == 1, self.node['containers'])
             matched = cont_with_id or cont_with_name
         if len(matched) == 0 or len(matched) > 1:
             print("Two or more node match identification criteria")
@@ -108,8 +111,8 @@ class ClusterState(object):
             print("Bad Identification")
             return
         else:
-            cont_with_id = filter(lambda x: str(x['Id']).find(containerId) == 0, self.node['containers'])
-            cont_with_name = filter(lambda x: str(x['Name']).find(containerId) == 1, self.node['containers'])
+            cont_with_id = filter(lambda x: str(x.id).find(containerId) == 0, self.node['containers'])
+            cont_with_name = filter(lambda x: str(x.name).find(containerId) == 1, self.node['containers'])
             matched = cont_with_id or cont_with_name
         if len(matched) == 0 or len(matched) > 1:
             print("Two or more node match identification criteria")
@@ -128,17 +131,17 @@ class ClusterState(object):
             return
         else:
             # Identification or a name?
-            cont_with_id = filter(lambda x: str(x['Id']).find(identification) == 0, self.node['containers'])
-            cont_with_name = filter(lambda x: str(x['Name']).find(identification) == 1, self.node['containers'])
+            cont_with_id = filter(lambda x: str(x.id).find(identification) == 0, self.node['containers'])
+            cont_with_name = filter(lambda x: str(x.name).find(identification) == 1, self.node['containers'])
             matched = (cont_with_id or cont_with_name)
         if not matched or len(matched) > 1:
             return
         container = matched[0]
         print("updating container", identification, field, value)
         if field.find("State") == 0 and len(field) == len("State"):
-            if container[field] == 0 and value == 1:
+            if (not container.isRunning) and value == 1:
                 self.session.publish("ovs.hook_container", container)
-            elif container[field] == 1 and value == 0:
+            elif container.isRunning and value == 0:
                 self.session.publish("ovs.unhook_container", container)
             else:
                 return

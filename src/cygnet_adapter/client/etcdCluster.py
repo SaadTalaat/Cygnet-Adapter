@@ -37,11 +37,19 @@ class EtcdClusterClient(etcd.Client):
         if containers:
             for container in containers.children:
                 container = self.get(container.key)
-                empty = {"Id": None, "Name": None, "Node": None, "State": 0, "Address": None}
+                empty = {"Id": None,
+                         "Name": None,
+                         "Node": None,
+                         "State": 0,
+                         "Address": None}
                 for leaf in container.children:
                     print(leaf)
                     empty[leaf.key.split("/")[-1]] = leaf.value
-                read_containers.append(empty)
+                container = Container(empty['Id'], self.nodeId)
+                container.name = empty['Name']
+                container.address = empty['Address']
+                container.running(empty['State'])
+                read_containers.append(container)
                 print("")
         print("Read containers", read_containers)
         return read_containers
@@ -98,7 +106,7 @@ class EtcdClusterClient(etcd.Client):
 
     # A container shall be docker /json api response like ##
     def addContainer(self, container):
-        container_key = "nodes/" + self.nodeId + "/containers/" + container['Id']
+        container_key = "nodes/" + self.nodeId + "/containers/" + container.id
 
         try:
             self.write(container_key, None, dir=True)
@@ -110,7 +118,7 @@ class EtcdClusterClient(etcd.Client):
             return False
 
     def updateContainer(self, container, key=None):
-        container_key = "nodes/" + self.nodeId + "/containers/" + container["Id"]
+        container_key = "nodes/" + self.nodeId + "/containers/" + container.id
         if key:
             current_key = container_key + "/" + key
         try:
@@ -130,7 +138,7 @@ class EtcdClusterClient(etcd.Client):
             return False
 
     def removeContainer(self, container):
-        container_key = "nodes/" + self.nodeId + "/containers/" + container['Id']
+        container_key = "nodes/" + self.nodeId + "/containers/" + container.id
         print("Removing container", container_key)
         try:
             self.delete(container_key, recursive=True)
