@@ -1,6 +1,6 @@
 import etcd
 from cygnet_common.generic.Container import Container
-
+from cygnet_common import strtypes
 
 class EtcdClusterClient(etcd.Client):
     def __init__(self, host, nodeId, port=2379, protocol='http'):
@@ -35,7 +35,7 @@ class EtcdClusterClient(etcd.Client):
         # If we get here, node is not empty nor new
         containers = self.get(node_key+"/containers/")
         read_containers = []
-        if containers:
+        if containers._children:
             for container in containers.children:
                 container = self.get(container.key)
                 empty = {"Id": None,
@@ -45,6 +45,11 @@ class EtcdClusterClient(etcd.Client):
                          "Address": None}
                 for leaf in container.children:
                     print(leaf)
+                    try:
+                        if leaf.value is not str:
+                            leaf.value = strtypes.cast_unicode(leaf.value)
+                    except:
+                        pass
                     empty[leaf.key.split("/")[-1]] = leaf.value
                 container = Container(empty['Id'], self.nodeId)
                 container.name = empty['Name']

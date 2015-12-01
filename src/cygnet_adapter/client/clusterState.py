@@ -73,6 +73,10 @@ class ClusterState(object):
         exists = filter(lambda x: str(x) == addr, [container.address for container in self.node['containers']])
         if addr and exists:
             return False
+        if type(addr) is not str:
+            addr= strtypes.cast_unicode(addr)
+        if type(containerId) is not str:
+            containerId = strtypes.cast_unicode(containerId)
         container = Container(containerId, self.node['id'])
         container.running(True)
         container.address = addr
